@@ -1,0 +1,47 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "v1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "labels": {
+                    "app": "flower"
+                },
+                "name": "flower"
+            },
+            "spec": {
+                "replicas": 3,
+                "selector": {
+                    "deployment-config.name": "flower"
+                },
+                "strategy": {
+                    "type": "Rolling"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "deployment-config.name": "flower"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "image": "docker-registry.default.svc:5000/dev/flower:promoteToQA",
+                                "imagePullPolicy": "Always",
+                                "name": "default-container"
+                            }
+                        ]
+                    }
+                },
+                "test": false,
+                "triggers": [
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {},
+    "resourceVersion": "",
+    "selfLink": ""
+}

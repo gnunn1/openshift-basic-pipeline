@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: product-catalog-pipeline
+  namespace: 
+  labels:
+    name: product-catalog-pipeline
+  annotations:
+    pipeline.alpha.openshift.io/uses: '[{"name": "", "namespace": "", "kind": "DeploymentConfig"}]'
+spec:
+  triggers:
+    -
+      type: GitHub
+      github:
+        secret: secret101
+    -
+      type: Generic
+      generic:
+        secret: secret101
+  runPolicy: Serial
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/gnunn1/openshift-basic-pipeline'
+      ref: master
+  strategy:
+    type: JenkinsPipeline
+    jenkinsPipelineStrategy:
+      jenkinsfile: |-
+        node('maven') {
+          stage 'buildInDevelopment'
+          openshiftBuild(namespace: 'product-catalog-dev', buildConfig: 'product-catalog', showBuildLogs: 'true')
+        }
+
+        node {
+          stage 'deployInDevelopment'
+          openshiftScale(namespace: 'product-catalog-dev', deploymentConfig: 'product-catalog',replicaCount: '2')
+        }
+
+        node {
+          stage 'test'
+          try {
+            sh "curl -s --head --request GET http://product-catalog-dev.apps.ocplab.com/ | grep '200 OK'"
+            return true
+          } catch (Exception e) {
+            return false
+          }
+        }
+
+        node {
+          stage 'approveTestDeployment' 
+          input 'Promote the Dev image to Test?'
+        }
+
+        node {
+          stage 'deployInTesting'
+          openshiftTag(namespace: 'product-catalog-dev', sourceStream: 'product-catalog',  sourceTag: 'latest', destinationNamespace: 'product-catalog-test',  destinationStream: 'product-catalog', destinationTag: 'latest')
+          openshiftScale(namespace: 'test', deploymentConfig: 'flower',replicaCount: '3')
+        }
+  output:
+  resources:
+  postCommit:

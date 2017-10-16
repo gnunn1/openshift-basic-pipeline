@@ -1,0 +1,23 @@
+---
+- name: Remove Pipeline from OpenShift
+  hosts: local
+  vars_files:
+    - vars.yml
+  tasks:
+
+    - name: Login in OpenShift
+      shell: "oc login --insecure-skip-tls-verify=true -u {{ username }} -p {{ password }} {{ openshift_master }}"
+      tags:
+        - openshift
+
+    - name: Delete Environments
+      shell: |
+        oc delete project dev
+        oc delete project test
+        oc delete project cicd
+      register: command_result
+      ignore_errors: yes
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+      tags:
+        - openshift

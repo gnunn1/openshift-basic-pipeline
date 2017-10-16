@@ -1,0 +1,78 @@
+---
+- name: Install Pipeline in OpenShift
+  hosts: local
+  vars_files:
+    - vars.yml
+  tasks:
+
+    - name: Login in OpenShift
+      shell: "oc login --insecure-skip-tls-verify=true -u {{ username }} -p {{ password }} {{ openshift_master }}"
+
+    - name: Create cicd OpenShift project
+      shell: "oc new-project product-catalog-cicd --display-name='CI/CD'"
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+    
+    - name: Create jenkins app
+      shell: "oc new-app {{ jenkins_template }} -n product-catalog-cicd"
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    - name: Create Environments
+      shell: |
+        oc new-project product-catalog-dev --display-name="Product Catalog Development"
+        oc new-project product-catalog-test --display-name="Product Catalog Test"
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    # Perform actions that require admin access
+    - block:
+      - name: Login in OpenShift as admin user
+        shell: "oc login --insecure-skip-tls-verify=true -u {{ admin_username }} -p {{ admin_password }} {{ openshift_master }}"
+
+      - name: Install product-catalog template
+        shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template.yaml"
+        ignore_errors: true
+
+      - include: permissions.yml
+
+      - name: Login in OpenShift
+        shell: "oc login --insecure-skip-tls-verify=true -u {{ username }} -p {{ password }} {{ openshift_master }}"
+
+    - name: Create application in dev
+      shell: "oc new-app --template=product-catalog -n product-catalog-dev"
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    - name: Create application in test
+      shell: "oc new-app --template=product-catalog -n product-catalog-test"
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    - name: Create Pipeline
+      shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/pipeline.yaml -n cicd"
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    - name: Waiting for jenkins to be ready
+      command: curl -k --head --silent https://jenkins-product-catalog-cicd.{{ openshift_domain }}/login
+      register: result
+      until: result.stdout.find("200 OK") != -1
+      retries: 30
+      delay: 5
+      changed_when: false
+
+    - name: Wait for Jenkins to initialize
+      pause:
+        seconds: 10
+
+    - name: Starting Pipeline
+      shell: "oc start-build product-catalog-pipeline -n product-catalog-cicd"
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
