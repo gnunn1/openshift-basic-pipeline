@@ -190,7 +190,7 @@ objects:
               - '-c'
               - >-
                 curl -o ~/php-react.sql
-                https://raw.githubusercontent.com/gnunn1/react-crud/master/database/php-react.sql
+                https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/react-crud/database/php-react.sql
                 && /opt/rh/rh-mysql57/root/usr/bin/mysql -h $MYSQL_SERVICE_HOST -u
                 $MYSQL_USER -D $MYSQL_DATABASE -p$MYSQL_PASSWORD -P 3306 <
                 ~/php-react.sql
