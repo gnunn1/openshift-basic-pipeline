@@ -95,7 +95,7 @@ objects:
     selector:
       name: ${NAME}
     strategy:
-      type: Recreate
+      type: Rolling
     template:
       metadata:
         labels:
