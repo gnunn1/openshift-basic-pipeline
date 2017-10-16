@@ -19,3 +19,7 @@ To remove the application from OpenShift use the teardown playbook:
 ```
 ansible-playbook teardown.yml
 ```
+
+### Sign-In
+
+The application allows you to register to access the administrative interface. Alternativelty, a default credential of ```demo@demo.com/Welcome1``` is provisioned.
