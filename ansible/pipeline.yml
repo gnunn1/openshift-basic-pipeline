@@ -49,7 +49,7 @@
       changed_when: "'exists' not in command_result.stderr"
 
     - name: Remove triggers from dc
-      shell: "oc patch dc/product-catalog --patch '{\"spec\":{\"triggers\":[]}}'"
+      shell: "oc patch dc/product-catalog --patch '{\"spec\":{\"triggers\":[]}}' -n product-catalog-dev"
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
@@ -61,7 +61,7 @@
       changed_when: "'exists' not in command_result.stderr"
 
     - name: Remove triggers from dc
-      shell: "oc patch dc/product-catalog --patch '{\"spec\":{\"triggers\":[]}}'"
+      shell: "oc patch dc/product-catalog --patch '{\"spec\":{\"triggers\":[]}}' -n product-catalog-test"
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
