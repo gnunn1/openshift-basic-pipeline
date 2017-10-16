@@ -4,7 +4,7 @@ This is a demonstrationof a basic OpenShift CI/CD pipeline deploying an applicat
 
 ![alt tag](http://i63.tinypic.com/2vci87n.png)
 
-Note that this was forked from this [repo](https://github.com/andy1992/react-crud.git), original license remains in effect.
+Note that this application was forked from this [repo](https://github.com/andy1992/react-crud.git), original license and rights remain in effect.
 
 ### Installation
 
