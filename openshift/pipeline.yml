@@ -40,7 +40,7 @@ spec:
         node {
           stage 'test'
           try {
-            sh "curl -s --head --request GET http://product-catalog-dev.apps.ocplab.com/ | grep '200 OK'"
+            sh "curl -s --head --request GET http://product-catalog.dev:8080/health.php | grep '200 OK'"
             return true
           } catch (Exception e) {
             return false
@@ -55,7 +55,7 @@ spec:
         node {
           stage 'deployInTesting'
           openshiftTag(namespace: 'product-catalog-dev', sourceStream: 'product-catalog',  sourceTag: 'latest', destinationNamespace: 'product-catalog-test',  destinationStream: 'product-catalog', destinationTag: 'latest')
-          openshiftScale(namespace: 'test', deploymentConfig: 'flower',replicaCount: '3')
+          openshiftScale(namespace: 'product-catalog-test', deploymentConfig: 'product-catalog',replicaCount: '3')
         }
   output:
   resources:

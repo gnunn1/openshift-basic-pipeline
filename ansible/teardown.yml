@@ -1,23 +1,26 @@
 ---
-- name: Remove Pipeline from OpenShift
+- name: Remove Projects from OpenShift
   hosts: local
   vars_files:
     - vars.yml
   tasks:
 
+    - name: Login in OpenShift with admin credentials
+      shell: "oc login --insecure-skip-tls-verify=true -u {{ admin_username }} -p {{ admin_password }} {{ openshift_master }}"
+
+    - name: Delete template
+      shell: "oc delete template product-catalog -n openshift"
+      ignore_errors: true
+
     - name: Login in OpenShift
       shell: "oc login --insecure-skip-tls-verify=true -u {{ username }} -p {{ password }} {{ openshift_master }}"
-      tags:
-        - openshift
 
     - name: Delete Environments
       shell: |
-        oc delete project dev
-        oc delete project test
-        oc delete project cicd
+        oc delete project product-catalog-dev
+        oc delete project product-catalog-test
+        oc delete project product-catalog-cicd
       register: command_result
       ignore_errors: yes
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      tags:
-        - openshift

@@ -34,7 +34,7 @@
         shell: "oc login --insecure-skip-tls-verify=true -u {{ admin_username }} -p {{ admin_password }} {{ openshift_master }}"
 
       - name: Install product-catalog template
-        shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template.yaml"
+        shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template.yml -n openshift"
         ignore_errors: true
 
       - include: permissions.yml
@@ -55,7 +55,7 @@
       changed_when: "'exists' not in command_result.stderr"
 
     - name: Create Pipeline
-      shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/pipeline.yaml -n cicd"
+      shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/pipeline.yml -n product-catalog-cicd"
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
