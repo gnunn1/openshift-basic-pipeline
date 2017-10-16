@@ -1,16 +1,20 @@
 <?php
 class Database{
 
-    // specify your own database credentials
-    private $host = "localhost";
-    private $db_name = "react-crud";
-    private $username = "root";
-    private $password = "secret";
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
     public $conn;
 
     // get the database connection
     public function getConnection(){
 
+        $this->host = getenv('DATABASE_SERVICE_NAME');
+        $this->db_name = getenv('DATABASE_NAME');
+        $this->username = getenv('DATABASE_USER');
+        $this->password = getenv('DATABASE_PASSWORD');
+            
         $this->conn = null;
 
         try{
