@@ -14,6 +14,8 @@ An ansible playbook has been provided to make this demo easy to install. To do s
 ansible-playbook pipeline.yml
 ```
 
+Note the playbook will display a couple of errors when patching out the triggers in the deploymentConfig, these can be ignored. 
+
 To remove the application from OpenShift use the teardown playbook:
 
 ```
