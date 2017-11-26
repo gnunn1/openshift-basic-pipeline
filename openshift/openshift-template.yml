@@ -186,7 +186,7 @@ objects:
         post:
           execNewPod:
             command:
-              - bin/sh
+              - /bin/sh
               - '-c'
               - >-
                 curl -o ~/php-react.sql
