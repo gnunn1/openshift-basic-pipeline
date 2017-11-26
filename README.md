@@ -14,6 +14,8 @@ An ansible playbook has been provided to make this demo easy to install. To do s
 ansible-playbook pipeline.yml
 ```
 
+Note the playbook will display a couple of errors when patching out the triggers in the deploymentConfig, these can be ignored. 
+
 To remove the application from OpenShift use the teardown playbook:
 
 ```
@@ -22,4 +24,4 @@ ansible-playbook teardown.yml
 
 ### Sign-In
 
-The application allows you to register to access the administrative interface. Alternativelty, a default credential of ```demo@demo.com/Welcome1``` is provisioned.
+The application allows you to register to access the administrative interface. Alternatively, a credential of ```demo@demo.com/Welcome1``` is provisioned.
