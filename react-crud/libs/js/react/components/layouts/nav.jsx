@@ -43,43 +43,39 @@ var NavComponent = React.createClass({
     render: function() {
         return(
             <div>
-            {
-                (this.state.isLoggedIn == 'false') ?
-
                 <nav className="navbar navbar-default navbar-fixed-top">
+                    {/* 
+                    <div className="navbar-header">
+                        <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline">
+                            <img src="http://icons.iconarchive.com/icons/graphicloads/100-flat/24/phone-icon.png" alt="Best Electronics"/><span>  Best Electronics</span>
+                        </a>
+                    </div>
+                    */}
                     <div className="container">
-                        {/* <div className="navbar-header">
-                            <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline"><img class="img-responsive" src="http://icons.iconarchive.com/icons/graphicloads/100-flat/24/phone-icon.png" alt="Electronics"/></a>
-                        </div> */}
-                        <div id="navbar" className="collapse navbar-collapse">
-                            <ul className="nav navbar-nav">
-                                <li><a href="#">Home</a></li>
-                                <li><a href="#login">Sign In</a></li>
-                                <li><a href="#register">Sign Up</a></li>
-                            </ul>
-                        </div>
+                        {
+                            (this.state.isLoggedIn == 'false') ?
+                                <div id="navbar" className="collapse navbar-collapse">
+                                    <ul className="nav navbar-nav">
+                                        <li><a href="#">Home</a></li>
+                                        <li><a href="#login">Sign In</a></li>
+                                        <li><a href="#register">Sign Up</a></li>
+                                    </ul>
+                                </div>
+                        :
+                                <div id="navbar" className="collapse navbar-collapse">
+                                <ul className="nav navbar-nav">
+                                    <li><a href="#">Home</a></li>
+                                    {
+                                        (this.state.user != '') ?
+                                        <li><a>Welcome, {this.state.user.email}</a></li>
+                                        : null
+                                    }
+                                    <li><a href="#logout" onClick={this.logout}>Sign Out</a></li>
+                                </ul>
+                            </div>
+                        }
                     </div>
                 </nav>
-                :
-                <nav className="navbar navbar-default navbar-fixed-top">
-                    <div className="container">
-                        {/* <div className="navbar-header">
-                            <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline"><img class="img-responsive" src="http://icons.iconarchive.com/icons/graphicloads/100-flat/24/phone-icon.png" alt="Electronics"/></a>
-                        </div> */}
-                        <div id="navbar" className="collapse navbar-collapse">
-                            <ul className="nav navbar-nav">
-                                <li><a href="#">Home</a></li>
-                                {
-                                    (this.state.user != '') ?
-                                    <li><a>Welcome, {this.state.user.email}</a></li>
-                                    : null
-                                }
-                                <li><a href="#logout" onClick={this.logout}>Sign Out</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            }
             </div>
         );
     }
