@@ -49,7 +49,7 @@ var NavComponent = React.createClass({
                 <nav className="navbar navbar-default navbar-fixed-top">
                     <div className="container">
                         {/* <div className="navbar-header">
-                            <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline"><img style="width:64px;height:64px;" src="http://icons.iconarchive.com/icons/graphicloads/100-flat/256/phone-icon.png" alt="Electronics"/></a>
+                            <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline"><img class="img-responsive" src="http://icons.iconarchive.com/icons/graphicloads/100-flat/24/phone-icon.png" alt="Electronics"/></a>
                         </div> */}
                         <div id="navbar" className="collapse navbar-collapse">
                             <ul className="nav navbar-nav">
@@ -64,7 +64,7 @@ var NavComponent = React.createClass({
                 <nav className="navbar navbar-default navbar-fixed-top">
                     <div className="container">
                         {/* <div className="navbar-header">
-                            <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline"><img style="width:64px;height:64px;" src="http://icons.iconarchive.com/icons/graphicloads/100-flat/256/phone-icon.png" alt="Electronics"/></a>
+                            <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline"><img class="img-responsive" src="http://icons.iconarchive.com/icons/graphicloads/100-flat/24/phone-icon.png" alt="Electronics"/></a>
                         </div> */}
                         <div id="navbar" className="collapse navbar-collapse">
                             <ul className="nav navbar-nav">
