@@ -45,13 +45,11 @@ var NavComponent = React.createClass({
             <div>
                 <nav className="navbar navbar-default navbar-fixed-top">
                     {/* Comment out block below */}
-                    {/*
                     <div className="navbar-header">
                         <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline">
                             <img src="http://icons.iconarchive.com/icons/graphicloads/100-flat/24/phone-icon.png" alt="Best Electronics"/><span>  Best Electronics</span>
                         </a>
                     </div>
-                    */}
                     <div className="container">
                         {
                             (this.state.isLoggedIn == 'false') ?
