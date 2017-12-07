@@ -2746,7 +2746,11 @@
         /**
          * Ordered list of injected plugins.
          */
-        plugins: [],
+        plugins: [
+            new HtmlWebpackPlugin({
+                hash: true
+            })
+        ],
 
         /**
          * Mapping from event name to dispatch config
