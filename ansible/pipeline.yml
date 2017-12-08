@@ -74,6 +74,9 @@
         - 0
         - 1
 
+    - name: Update test imagePullPolicy
+      shell: "oc patch dc/product-catalog -p '{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"product-catalog\",\"imagePullPolicy\":\"Always\"}]}}}}'"
+
     - name: Create Pipeline
       shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/pipeline.yml -n product-catalog-cicd"
       register: command_result
