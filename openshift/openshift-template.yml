@@ -16,6 +16,8 @@ metadata:
       for the product catalog application, including a build configuration, application
       deployment configuration, and database deployment configuration.
   name: product-catalog
+  label:
+    app: ${NAME}
 objects:
 - apiVersion: v1
   kind: Secret

@@ -33,9 +33,15 @@
       - name: Login in OpenShift as admin user
         shell: "oc login --insecure-skip-tls-verify=true -u {{ admin_username }} -p {{ admin_password }} {{ openshift_master }}"
 
-      - name: Install product-catalog template
+      - name: Install persistent product-catalog template
         shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template.yml -n openshift"
         ignore_errors: true
+        when: not ephemeral
+
+      - name: Install ephemeral product-catalog template
+        shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template-ephemeral.yml -n openshift"
+        ignore_errors: true
+        when: ephemeral
 
       - include: permissions.yml
 

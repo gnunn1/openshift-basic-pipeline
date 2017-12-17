@@ -11,5 +11,8 @@ password: developer
 admin_username: admin
 admin_password: admin
 
+# Whether to use ephemeral template
+ephemeral: true
+
 # Jenkins Template, either jenkins-ephemeral or jenkins-persistent
 jenkins_template: jenkins-ephemeral
