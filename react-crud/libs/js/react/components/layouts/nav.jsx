@@ -44,7 +44,7 @@ var NavComponent = React.createClass({
         return(
             <div>
                 <nav className="navbar navbar-default navbar-fixed-top">
-                    {/* Remove comment block below to show change */}
+                    {/* Remove comment block below to show change  */}
                     {/*
                     <div className="navbar-header">
                         <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline">
@@ -52,6 +52,7 @@ var NavComponent = React.createClass({
                         </a>
                     </div>
                     */}
+                                        
                     <div className="container">
                         {
                             (this.state.isLoggedIn == 'false') ?
