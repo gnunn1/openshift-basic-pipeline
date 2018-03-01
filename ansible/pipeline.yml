@@ -54,15 +54,11 @@
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
 
-    - name: Remove triggers from dc
-      shell: "oc patch dc product-catalog --type=json -p='[{\"op\": \"test\",\"path\": \"/spec/triggers/{{item}}/type\",\"value\": \"ImageChange\" },{\"op\": \"replace\",\"path\": \"/spec/triggers/{{item}}/imageChangeParams/automatic\",\"value\": false }]' -n product-catalog-dev"
+    - name: Set ImageChange trigger to manual in dev
+      shell: "oc set triggers dc product-catalog --containers='product-catalog' --from-image='product-catalog:latest' --manual=true -n product-catalog-dev"
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      ignore_errors: true
-      with_items:
-        - 0
-        - 1
 
     - name: Create application in test
       shell: "oc new-app --template=product-catalog -n product-catalog-test"
@@ -70,15 +66,11 @@
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
 
-    - name: Remove triggers from dc
-      shell: "oc patch dc product-catalog --type=json -p='[{\"op\": \"test\",\"path\": \"/spec/triggers/{{item}}/type\",\"value\": \"ImageChange\" },{\"op\": \"replace\",\"path\": \"/spec/triggers/{{item}}/imageChangeParams/automatic\",\"value\": false }]' -n product-catalog-test"
+    - name: Set ImageChange trigger to manual in test
+      shell: "oc set triggers dc product-catalog --containers='product-catalog' --from-image='product-catalog:latest' --manual=true -n product-catalog-test"
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-      ignore_errors: true
-      with_items:
-        - 0
-        - 1
 
     - name: Update test imagePullPolicy
       shell: "oc patch dc/product-catalog -p '{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"product-catalog\",\"imagePullPolicy\":\"Always\"}]}}}}'"
