@@ -27,7 +27,7 @@ spec:
     type: JenkinsPipeline
     jenkinsPipelineStrategy:
       jenkinsfile: |-
-        node('maven') {
+        node {
           stage 'buildInDevelopment'
           openshiftBuild(namespace: 'product-catalog-dev', buildConfig: 'product-catalog', showBuildLogs: 'true')
         }
@@ -41,7 +41,7 @@ spec:
         node {
           stage 'test'
           try {
-            sh "curl -s --head --request GET http://product-catalog.dev:8080/health.php | grep '200 OK'"
+            sh "curl -s --head --request GET http://product-catalog.product-catalog-dev:8080/health.php | grep '200 OK'"
             return true
           } catch (Exception e) {
             return false

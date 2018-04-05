@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: product-catalog
+  template: product-catalog-ephemeral
   app: product-catalog
 message: |-
   The following service(s) have been created in your project: ${NAME}, ${DATABASE_SERVICE_NAME}.
@@ -18,7 +18,7 @@ metadata:
       deployment configuration, and database deployment configuration.
   label:
     app: ${NAME}
-  name: product-catalog
+  name: product-catalog-ephemeral
 objects:
 - apiVersion: v1
   kind: Secret

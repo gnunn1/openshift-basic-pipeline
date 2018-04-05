@@ -5,6 +5,18 @@
     - vars.yml
   tasks:
 
+    - name: Set ephemeral or persistent
+      set_fact:
+        app_template: product-catalog-ephemeral
+        jenkins_template: jenkins-ephemeral
+      when: ephemeral
+
+    - name: Set ephemeral or persistent
+      set_fact:
+        app_template: product-catalog-persistent
+        jenkins_template: jenkins-persistent
+      when: not ephemeral
+
     - name: Login in OpenShift
       shell: "oc login --insecure-skip-tls-verify=true -u {{ username }} -p {{ password }} {{ openshift_master }}"
 
@@ -34,14 +46,12 @@
         shell: "oc login --insecure-skip-tls-verify=true -u {{ admin_username }} -p {{ admin_password }} {{ openshift_master }}"
 
       - name: Install persistent product-catalog template
-        shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template.yml -n openshift"
+        shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template-persistent.yml -n openshift"
         ignore_errors: true
-        when: not ephemeral
 
       - name: Install ephemeral product-catalog template
         shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template-ephemeral.yml -n openshift"
         ignore_errors: true
-        when: ephemeral
 
       - include: permissions.yml
 
@@ -49,7 +59,7 @@
         shell: "oc login --insecure-skip-tls-verify=true -u {{ username }} -p {{ password }} {{ openshift_master }}"
 
     - name: Create application in dev
-      shell: "oc new-app --template=product-catalog -n product-catalog-dev"
+      shell: "oc new-app --template={{app_template}} -n product-catalog-dev"
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
@@ -61,7 +71,7 @@
       changed_when: "'exists' not in command_result.stderr"
 
     - name: Create application in test
-      shell: "oc new-app --template=product-catalog -n product-catalog-test"
+      shell: "oc new-app --template={{app_template}} -n product-catalog-test"
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
