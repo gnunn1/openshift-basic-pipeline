@@ -1,0 +1,137 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: product-catalog-cross-pipeline
+  namespace: 
+  labels:
+    name: product-catalog-cross-pipeline
+  annotations:
+    pipeline.alpha.openshift.io/uses: '[{"name": "product-catalog", "namespace": "product-catalog-dev", "kind": "DeploymentConfig"}]'
+spec:
+  triggers:
+    -
+      type: GitHub
+      github:
+        secret: secret101
+    -
+      type: Generic
+      generic:
+        secret: secret101
+  runPolicy: Serial
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/gnunn1/openshift-basic-pipeline'
+      ref: master
+  strategy:
+    type: JenkinsPipeline
+    jenkinsPipelineStrategy:
+      jenkinsfile: |-
+        pipeline {
+          agent {
+            label 'jenkins-slave-image-mgmt'
+          }
+          parameters {
+            string(name: 'APP_NAME', defaultValue: 'product-catalog', description: "Application Name - all resources use this name as a label")
+            string(name: 'DEV_PROJECT', defaultValue: 'product-catalog-dev', description: "Name of the Source Namespace")
+            string(name: 'DEV_TAG', defaultValue: 'latest', description: "Source Tag")
+            string(name: 'DEV_REGISTRY', defaultValue: 'docker://docker-registry.default.svc:5000', description: "Development Image Registry")
+
+            string(name: 'TEST_PROJECT', defaultValue: 'product-catalog-test', description: "Name of the Destination Namespace")
+            string(name: 'TEST_TAG', defaultValue: 'latest', description: "Destination Tag")
+            string(name: 'TEST_REGISTRY', defaultValue: 'docker://docker-registry-default.apps.ocplab.com', description: "Test Image Registry")
+          }                                              
+
+          stages {
+
+            stage('Build Info') {
+              steps {
+                  echo "Build Number is: ${env.BUILD_NUMBER}"
+                  echo "Job Name is: ${env.JOB_NAME}"
+                  sh "oc version"
+                  sh "skopeo --version"
+              }
+            }
+
+            stage ('Build Development') {
+              steps {
+                script {
+                  openshift.withCluster() {
+                    openshift.withProject("${DEV_PROJECT}") {
+                      openshift.startBuild('${APP_NAME}','--wait=true')
+                    }
+                  }
+                }
+              }
+            }
+
+            stage ('Deploy Development') {
+              steps {
+                script {
+                  openshift.withCluster() {
+                    openshift.withProject("${DEV_PROJECT}") {
+                      def rm = openshift.selector("dc", "${APP_NAME}").rollout()
+                      rm.latest()
+                      echo 'Waiting for rollout to complete'
+                      rm.status()
+                    }
+                  }
+                }
+              }
+            }
+
+            stage('Smoke Test') {
+              steps {
+                script {
+                  sh "curl -s --head --request GET http://${APP_NAME}.${DEV_PROJECT}:8080/health.php | grep '200 OK'"
+                }
+              }
+            }
+
+            stage('Promote to Test?') {
+              steps {
+                timeout(time:15, unit:'MINUTES') {
+                    input message: "Promote to Test?", ok: "Promote"
+                }
+              }
+            }
+
+            stage('Copy Image to Test') {
+              steps {
+                  script {
+                      openshift.withCluster() {
+                          openshift.withProject("${DEV_PROJECT}") {
+                              withCredentials([string(credentialsId: 'DEV_CREDS', variable: 'DEV_CREDS'),
+                                               string(credentialsId: 'TEST_CREDS', variable: 'TEST_CREDS')]) {
+                                  // call like this so we dont print credentials to logs
+                                  sh '''
+                                        set -x
+                                        skopeo --debug copy --src-tls-verify=false --dest-tls-verify=false --src-creds="${DEV_CREDS}" --dest-creds="${TEST_CREDS}" "${DEV_REGISTRY}/${DEV_PROJECT}/${APP_NAME}:${DEV_TAG}" "${TEST_REGISTRY}/${TEST_PROJECT}/${APP_NAME}:${TEST_TAG}"
+                                      '''
+                              }
+                          }
+                      }
+                  }
+              }
+            }
+
+            stage('Deploy in Test') {
+              steps {
+                script {
+                  openshift.withCluster("test") {
+                    openshift.withProject("${TEST_PROJECT}") {
+                      def rm = openshift.selector("dc", "${APP_NAME}").rollout()
+                      rm.latest()
+                      echo 'Waiting for rollout to complete'
+                      rm.status()
+                    }
+                  }
+                }
+              }
+            }
+
+          }
+        }
+  output:
+  resources:
+  postCommit:

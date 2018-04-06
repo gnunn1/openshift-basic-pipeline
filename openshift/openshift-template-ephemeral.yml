@@ -9,7 +9,7 @@ metadata:
   annotations:
     description: A product catalog application using PHP, React and MySQL
     iconClass: icon-php
-    openshift.io/display-name: Product Catalog
+    openshift.io/display-name: Product Catalog (Ephemeral)
     openshift.io/documentation-url: "https://github.com/gnunn1/openshift-basic-pipeline"
     template.openshift.io/bindable: "false"
     tags: php

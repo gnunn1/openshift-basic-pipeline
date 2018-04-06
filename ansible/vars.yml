@@ -39,6 +39,3 @@ admin_password: admin
 
 # Whether to use ephemeral template
 ephemeral: false
-
-# Jenkins Template, either jenkins-ephemeral or jenkins-persistent
-jenkins_template: jenkins-persistent
