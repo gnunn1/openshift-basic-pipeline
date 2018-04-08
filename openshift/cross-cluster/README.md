@@ -10,11 +10,19 @@ Here are instructions for setting this up, unlike the basic pipeline it is not a
 
 ```oc new-project product-catalog-cicd --display-name='CI/CD'```
 
-2. Create a new persistent jenkins application. While ephemeral can we work there is some configuration of jenkins required and it is nice to have it persisted across stop/starts of the cluster
+2. Create the jenkins-image-management image as per (documentation)[https://github.com/redhat-cop/containers-quickstarts/tree/master/jenkins-slaves/jenkins-slave-image-mgmt]:
+
+```oc process -f https://raw.githubusercontent.com/redhat-cop/containers-quickstarts/master/jenkins-slaves/templates/jenkins-slave-image-mgmt-template.yml | oc apply -f-```
+
+2. Create a new persistent jenkins application. While ephemeral can we work there is some configuration of jenkins required and it is nice to have it persisted across stop/starts of the cluster:
+
+```oc new-app --template=jenkins-persistent```
 
 3. Deploy the pipeline to the project:
 
 ```oc create -f cross-cluster-pipeline.yml```
+
+4. Configure the pipeline variables by editing the pipeline variables, notably update the ```TEST_REGISTRY``` which is the registry address for the test cluster
 
 4. Get the token for the Jenkins service account and record it somewhere:
 
@@ -52,7 +60,7 @@ Here are instructions for setting this up, unlike the basic pipeline it is not a
 
 4. Give the Jenkins SA permissions to work with the project:
 
-```oc policy add-role-to-user edit system:serviceaccount:product-catalog-cicd:jenkins -n product-catalog-test```
+```oc policy add-role-to-user edit system:serviceaccount:product-catalog-test:jenkins -n product-catalog-test```
 
 5. Get the token for the Jenkins service account:
 
@@ -70,7 +78,20 @@ We have two ```jenkins``` tokens, one for the dev cluster and one for test. Now 
 
 2. Repeat step 1 but use the token for the ```jenkins``` account from the test cluster. Set the ID field to be TEST_CREDS and then save it.
 
-3. Next we need to configure Jenkins in the Dev cluster to be able to access the test cluster. Configure  openshift cluster as per the instructions (here)[https://github.com/openshift/jenkins-client-plugin/blob/master/README.md#configuring-an-openshift-cluster]. Name the cluster ```test``` to match what is in the pipeline.
+3. Next we need to configure Jenkins in the Dev cluster to be able to access the test cluster. Configure  openshift cluster as per the instructions (here)[https://github.com/openshift/jenkins-client-plugin/blob/master/README.md#configuring-an-openshift-cluster]. Name the cluster ```test``` to match what is in the pipeline. 
+
+You will need to create a Jenkins Credential for accessing the cluster, sse the following values:
+
+Kind: OpenShift Token for OpenShift Client Plugin
+Token: Jenkins service account for test cluster that you retrieved earlier
+ID: Jenkins
+Description: Jenkins Credential for Test Cluster
+
+After adding the credential, use the following parameters:
+
+Disable TLS Verify: true
+Server Certificate Authority: On the test cluster master, ```cat /etc/origin/master/ca.crt```
+Default Project: product-catalog-test
 
 ### Run the demo
 
