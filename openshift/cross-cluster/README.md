@@ -14,33 +14,33 @@ Here are instructions for setting this up, unlike the basic pipeline it is not a
 
 ```oc process -f https://raw.githubusercontent.com/redhat-cop/containers-quickstarts/master/jenkins-slaves/templates/jenkins-slave-image-mgmt-template.yml | oc apply -f-```
 
-2. Create a new persistent jenkins application. While ephemeral can we work there is some configuration of jenkins required and it is nice to have it persisted across stop/starts of the cluster:
+3. Create a new persistent jenkins application. While ephemeral can we work there is some configuration of jenkins required and it is nice to have it persisted across stop/starts of the cluster:
 
 ```oc new-app --template=jenkins-persistent```
 
-3. Deploy the pipeline to the project:
+4. Deploy the pipeline to the project:
 
 ```oc create -f cross-cluster-pipeline.yml```
 
-4. Configure the pipeline variables by editing the pipeline variables, notably update the ```TEST_REGISTRY``` which is the registry address for the test cluster
+5. Configure the pipeline variables by editing the pipeline variables, notably update the ```TEST_REGISTRY``` which is the registry address for the test cluster
 
-4. Get the token for the Jenkins service account and record it somewhere:
+6. Get the token for the Jenkins service account and record it somewhere:
 
 ```oc sa get-token jenkins```
 
-5. Create the development project:
+7. Create the development project:
 
 ```oc new-project product-catalog-dev --display-name='Catalog Development'```
 
-6. Create the application in the Development using the template:
+8. Create the application in the Development using the template:
 
 ```oc process -f openshift-template-persistent.yml | oc apply -f -```
 
-7. Disable the triggers for the application since we want the pipeline to control the deployment:
+9. Disable the triggers for the application since we want the pipeline to control the deployment:
 
 ```oc set triggers dc product-catalog --containers='product-catalog' --from-image='product-catalog:latest' --manual=true -n product-catalog-dev```
 
-8. Add permisions for the jenkins service account to work with the development project:
+10. Add permisions for the jenkins service account to work with the development project:
 
 ```oc policy add-role-to-user edit system:serviceaccount:product-catalog-cicd:jenkins -n product-catalog-dev```
 
@@ -80,18 +80,22 @@ We have two ```jenkins``` tokens, one for the dev cluster and one for test. Now 
 
 3. Next we need to configure Jenkins in the Dev cluster to be able to access the test cluster. Configure  openshift cluster as per the instructions (here)[https://github.com/openshift/jenkins-client-plugin/blob/master/README.md#configuring-an-openshift-cluster]. Name the cluster ```test``` to match what is in the pipeline. 
 
-You will need to create a Jenkins Credential for accessing the cluster, sse the following values:
+You will need to create a Jenkins Credential for accessing the cluster, see the following values:
 
+```
 Kind: OpenShift Token for OpenShift Client Plugin
 Token: Jenkins service account for test cluster that you retrieved earlier
 ID: Jenkins
 Description: Jenkins Credential for Test Cluster
+```
 
 After adding the credential, use the following parameters:
 
+```
 Disable TLS Verify: true
 Server Certificate Authority: On the test cluster master, ```cat /etc/origin/master/ca.crt```
 Default Project: product-catalog-test
+```
 
 ### Run the demo
 
