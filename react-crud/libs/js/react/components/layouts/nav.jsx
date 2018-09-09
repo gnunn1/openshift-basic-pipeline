@@ -45,6 +45,7 @@ var NavComponent = React.createClass({
             <div>
                 <nav className="navbar navbar-default navbar-fixed-top">
                     {/* Remove comment block below to show change  */}
+                    
                     {/*
                     <div className="navbar-header">
                         <a className="navbar-brand" href="http://github.com/gnunn1/openshift-basic-pipeline">
