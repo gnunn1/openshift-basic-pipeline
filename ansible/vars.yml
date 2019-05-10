@@ -31,10 +31,10 @@ admin_password: admin
 #openshift_domain: apps.ocplab.com
 # Your OpenShift credentials
 #username: user01
-#password: R@dhat1234
+#password: user01
 # OpenShift Administrative credentials
 #admin_username: admin
-#admin_password: R@dhat1234
+#admin_password: admin
 
 
 # Whether to use ephemeral template
