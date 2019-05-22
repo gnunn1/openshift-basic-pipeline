@@ -49,7 +49,9 @@ spec:
                 script {
                   openshift.withCluster() {
                     openshift.withProject('product-catalog-dev') {
-                      openshift.selector("dc", "product-catalog").rollout().latest();
+                      def dc = openshift.selector("dc", "product-catalog")
+                      dc.rollout().latest();
+                      dc.rollout().status();
                     }
                   }
                 }
@@ -83,7 +85,9 @@ spec:
                   openshift.withCluster() {
                     openshift.withProject('product-catalog-test') {
                       openshift.tag("product-catalog-dev/product-catalog:latest", "product-catalog-test/product-catalog:latest")
-                      openshift.selector("dc", "product-catalog").rollout().latest();
+                      def dc = openshift.selector("dc", "product-catalog")
+                      dc.rollout().latest();
+                      dc.rollout().status();
                     }
                   }
                 }
