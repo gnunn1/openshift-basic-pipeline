@@ -107,7 +107,7 @@
 
     - name: Wait for Jenkins to initialize
       pause:
-        seconds: 10
+        seconds: 30
 
     - name: Starting Pipeline
       shell: "oc start-build product-catalog-pipeline -n product-catalog-cicd"

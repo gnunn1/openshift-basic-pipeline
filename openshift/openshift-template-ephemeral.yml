@@ -96,7 +96,7 @@ objects:
       description: Defines how to deploy the application server
       app.openshift.io/connects-to: database
     labels:
-      app.kubernetes.io/name: ${NAME}
+      app.kubernetes.io/name: php
       app.kubernetes.io/component: frontend
       app.kubernetes.io/part-of: ${NAME}
       app.kubernetes.io/instance: ${NAME}
@@ -179,7 +179,7 @@ objects:
     annotations:
       description: Defines how to deploy the database
     labels:
-      app.kubernetes.io/name: ${DATABASE_SERVICE_NAME}
+      app.kubernetes.io/name: mysql-database
       app.kubernetes.io/component: database
       app.kubernetes.io/part-of: ${NAME}
       app.kubernetes.io/instance: database
