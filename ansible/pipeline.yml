@@ -25,9 +25,15 @@
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
-    
+
     - name: Create jenkins app
       shell: "oc new-app {{ jenkins_template }} -n product-catalog-cicd"
+      register: command_result
+      failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+      changed_when: "'exists' not in command_result.stderr"
+
+    - name: Create jenkins app
+      shell: "oc set resources dc jenkins --limits=memory=1536Mi --requests=memory=1536Mi"
       register: command_result
       failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
       changed_when: "'exists' not in command_result.stderr"
@@ -46,11 +52,11 @@
         shell: "oc login --insecure-skip-tls-verify=true -u {{ admin_username }} -p {{ admin_password }} {{ openshift_master }}"
 
       - name: Install persistent product-catalog template
-        shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template-persistent.yml -n openshift"
+        shell: "oc apply -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template-persistent.yml -n openshift"
         ignore_errors: true
 
       - name: Install ephemeral product-catalog template
-        shell: "oc create -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template-ephemeral.yml -n openshift"
+        shell: "oc apply -f https://raw.githubusercontent.com/gnunn1/openshift-basic-pipeline/master/openshift/openshift-template-ephemeral.yml -n openshift"
         ignore_errors: true
 
       - include: permissions.yml

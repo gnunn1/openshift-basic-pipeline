@@ -94,6 +94,14 @@ objects:
   metadata:
     annotations:
       description: Defines how to deploy the application server
+      app.openshift.io/connects-to: database
+    labels:
+      app.kubernetes.io/name: ${NAME}
+      app.kubernetes.io/component: frontend
+      app.kubernetes.io/part-of: ${NAME}
+      app.kubernetes.io/instance: ${NAME}
+      app.openshift.io/runtime: php
+      app.openshift.io/runtime-version: 7.0
     name: ${NAME}
   spec:
     replicas: 1
@@ -130,7 +138,7 @@ objects:
               port: 8080
             initialDelaySeconds: 30
             timeoutSeconds: 3
-          name: ${NAME} 
+          name: ${NAME}
           ports:
           - containerPort: 8080
           readinessProbe:
@@ -180,6 +188,11 @@ objects:
   metadata:
     annotations:
       description: Defines how to deploy the database
+    labels:
+      app.kubernetes.io/name: ${DATABASE_SERVICE_NAME}
+      app.kubernetes.io/component: database
+      app.kubernetes.io/part-of: ${NAME}
+      app.kubernetes.io/instance: database
     name: ${DATABASE_SERVICE_NAME}
   spec:
     replicas: 1

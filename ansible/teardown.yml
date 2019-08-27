@@ -5,12 +5,12 @@
     - vars.yml
   tasks:
 
-    - name: Login in OpenShift with admin credentials
-      shell: "oc login --insecure-skip-tls-verify=true -u {{ admin_username }} -p {{ admin_password }} {{ openshift_master }}"
+    # - name: Login in OpenShift with admin credentials
+    #   shell: "oc login --insecure-skip-tls-verify=true -u {{ admin_username }} -p {{ admin_password }} {{ openshift_master }}"
 
-    - name: Delete template
-      shell: "oc delete template product-catalog -n openshift"
-      ignore_errors: true
+    # - name: Delete template
+    #   shell: "oc delete template product-catalog -n openshift"
+    #   ignore_errors: true
 
     - name: Login in OpenShift
       shell: "oc login --insecure-skip-tls-verify=true -u {{ username }} -p {{ password }} {{ openshift_master }}"
