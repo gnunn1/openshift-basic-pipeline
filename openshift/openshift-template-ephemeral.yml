@@ -101,7 +101,6 @@ objects:
       app.kubernetes.io/part-of: ${NAME}
       app.kubernetes.io/instance: ${NAME}
       app.openshift.io/runtime: php
-      app.openshift.io/runtime-version: 7.0
     name: ${NAME}
   spec:
     replicas: 1

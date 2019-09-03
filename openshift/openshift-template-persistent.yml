@@ -96,12 +96,12 @@ objects:
       description: Defines how to deploy the application server
       app.openshift.io/connects-to: database
     labels:
+      test: test
       app.kubernetes.io/name: php
       app.kubernetes.io/component: frontend
       app.kubernetes.io/part-of: ${NAME}
       app.kubernetes.io/instance: ${NAME}
       app.openshift.io/runtime: php
-      app.openshift.io/runtime-version: 7.0
     name: ${NAME}
   spec:
     replicas: 1
